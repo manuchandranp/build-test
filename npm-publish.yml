@@ -1,8 +1,9 @@
----
 name: NPM Publish
 run-name: Publish ${{ inputs.prerelease && 'prerelease ' || '' }}NPM package to `${{ inputs.jfrog-npm-repository }}`
 
 on:
+  push:
+    branches: main 
   workflow_call:
     inputs:
       git-branch-ref-regex:
@@ -281,3 +282,4 @@ jobs:
         run: |
           jf rt build-add-git
           jf rt build-publish --detailed-summary
+
