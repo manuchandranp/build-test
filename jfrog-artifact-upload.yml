@@ -2,6 +2,8 @@
 name: Upload artifact to JFrog Artifactory
 
 on:
+  push:
+    branches: main
   workflow_call:
     inputs:
       jfrog-url:
@@ -117,3 +119,4 @@ jobs:
           jf rt build-add-git
           jf rt build-publish --detailed-summary
           jf rt set-props "$JFROG_ARTIFACT_PATH" "build.branch=$BRANCH_NAME"
+
