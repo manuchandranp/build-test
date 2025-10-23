@@ -26,21 +26,18 @@ jobs:
       # -----------------------------------------------------------
       # CALL THE REUSABLE WORKFLOW TO UPLOAD TO JFROG
       # -----------------------------------------------------------
+     # .github/workflows/main-ci.yml (Correct Structure)
+
       - name: Upload to JFrog Artifactory
-        uses: ./.github/workflows/upload-artifact.yml # Path to the reusable workflow
+        uses: ./.github/workflows/upload-artifact.yml # This line specifies the workflow to call
         id: jfrog-upload
-        with:
-          # --- REQUIRED INPUTS ---
-          jfrog-url: https://mycompany.jfrog.io           # <-- THIS IS WHERE YOU SUPPLY THE URL
-          jfrog-repository: generic-local-repo            # The target repo in Artifactory
-          workflow-artifact-name: my-project-artifact     # Name of the artifact uploaded above
-          artifact-target-path: latest/production/        # Target path within the repo
-          
-          # --- OPTIONAL INPUTS (using defaults here) ---
-          # archive-artifact: zip # Uncomment if you want to override the default "zip"
-          
-        secrets:
-          jfrog-access-token: ${{ secrets.JFROG_ACCESS_TOKEN }} # Must be configured in your repo secrets
+        with: # Inputs passed to the workflow
+          jfrog-url: https://mycompany.jfrog.io           
+          jfrog-repository: generic-local-repo            
+          workflow-artifact-name: my-project-artifact     
+          artifact-target-path: latest/production/        
+        
+
           
       - name: Use Output Path
         run: |
