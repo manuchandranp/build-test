@@ -3,10 +3,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: main
-  pull_request:
-    branches:
-      - main
-      - 'feature/**'
 
 # Define a single secret for the entire workflow that will be passed to the jobs
 # You must set this secret in your repository or organization settings
