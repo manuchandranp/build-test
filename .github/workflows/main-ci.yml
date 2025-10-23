@@ -93,7 +93,7 @@ jobs:
         run: |
           # Explicitly configure the JFrog platform URL and access token.
           # This creates a configuration named 'jfrog-platform-config' and makes it active.
-          jf c add $JFROG_SERVER_ID --url="${{ inputs.jfrog-url }}" --access-token="${{ secrets.jfrog-access-token }}" --overwrite=true
+          jf c add $JFROG_SERVER_ID --url="https://hts2.jfrog.io" --access-token="cmVmdGtuOjAxOjE3OTI3NjUwOTA6c2pSNTJ0cFcxUVYzenhFNUoyZ0ROUkgxNmNP" --overwrite=true
           jf c use $JFROG_SERVER_ID
           
           # Set the build info environment variables for upload and publish steps
