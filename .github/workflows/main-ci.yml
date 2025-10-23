@@ -70,6 +70,8 @@ jobs:
       JFROG_BUILD_NUMBER: ${{ inputs.jfrog-build-number }}
       ARTIFACT_SOURCE_PATH: ${{ inputs.artifact-source-path }}
       ARCHIVE_ARTIFACT: ${{ inputs.archive-artifact }}
+      # Define the server ID used in the 'Configure' step for easy referencing
+      JFROG_SERVER_ID: jfrog-platform-config
     outputs:
       artifact-path: ${{ steps.set-job-outputs.outputs.artifact-path }}
       artifact-basename: ${{ steps.set-job-outputs.outputs.artifact-basename }}
@@ -86,27 +88,27 @@ jobs:
           path: temp/${{ inputs.workflow-artifact-name }}
 
       - uses: jfrog/setup-jfrog-cli@v4
-      # Removed the env block here to prevent conflicting automatic config
 
       - name: Configure JFrog Connection and Build Info
         run: |
           # Explicitly configure the JFrog platform URL and access token.
           # This creates a configuration named 'jfrog-platform-config' and makes it active.
-          jf c add jfrog-platform-config --url="${{ inputs.jfrog-url }}" --access-token="${{ secrets.jfrog-access-token }}" --overwrite=true
-          jf c use jfrog-platform-config
+          jf c add $JFROG_SERVER_ID --url="${{ inputs.jfrog-url }}" --access-token="${{ secrets.jfrog-access-token }}" --overwrite=true
+          jf c use $JFROG_SERVER_ID
           
           # Set the build info environment variables for upload and publish steps
           echo "JFROG_CLI_BUILD_NAME=$JFROG_BUILD_NAME" | tee --append "$GITHUB_ENV"
           echo "JFROG_CLI_BUILD_NUMBER=$JFROG_BUILD_NUMBER" | tee --append "$GITHUB_ENV"
 
       - name: Verify Artifactory is accessible
-        # This will now succeed as the URL and token are configured via 'jf c add'
-        run: jf rt ping
+        # Explicitly reference the server ID for robustness
+        run: jf rt ping --server-id=$JFROG_SERVER_ID
 
       - name: Upload to ${{ inputs.jfrog-repository }} artifact repository
         working-directory: ${{ steps.download-artifact.outputs.download-path }}
         run: |
-          jf rt upload "$ARTIFACT_SOURCE_PATH" "$JFROG_ARTIFACT_PATH" --archive="$ARCHIVE_ARTIFACT" --detailed-summary --fail-no-op
+          # Explicitly reference the server ID for robustness
+          jf rt upload "$ARTIFACT_SOURCE_PATH" "$JFROG_ARTIFACT_PATH" --archive="$ARCHIVE_ARTIFACT" --detailed-summary --fail-no-op --server-id=$JFROG_SERVER_ID
 
       - name: Set job outputs
         id: set-job-outputs
@@ -123,6 +125,6 @@ jobs:
           BRANCH_NAME: ${{ steps.set-job-outputs.outputs.branch-name }}
         run: |
           jf rt build-add-git
-          jf rt build-publish --detailed-summary
-          # Setting properties should now work as the connection is established
-          jf rt set-props "$JFROG_ARTIFACT_PATH" "build.branch=$BRANCH_NAME"
+          jf rt build-publish --detailed-summary --server-id=$JFROG_SERVER_ID
+          # Explicitly reference the server ID when setting properties
+          jf rt set-props "$JFROG_ARTIFACT_PATH" "build.branch=$BRANCH_NAME" --server-id=$JFROG_SERVER_ID
