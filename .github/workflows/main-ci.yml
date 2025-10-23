@@ -5,7 +5,7 @@ on:
     branches: [ main ]
   workflow_call:
     inputs:
-      jfrog-url:
+      JFROGURL:
         description: URL to JFrog platform
         default: https://hts2.jfrog.io
         type: string
@@ -43,7 +43,7 @@ on:
         required: false
         default: zip
     secrets:
-      jfrog-access-token:
+      JFROG_ACCESS-TOKEN:
         description: Access token for NPM registry
         required: true
     outputs:
