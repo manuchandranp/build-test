@@ -32,7 +32,7 @@ on:
         description: Local file system path to artifacts that should be uploaded to Artifactory
         type: string
         required: false
-        default: ./
+        default: manuchandranp/build-test
       artifact-target-path:
         description: Target path within the artifact repository
         type: string
