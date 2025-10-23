@@ -1,4 +1,3 @@
----
 name: Upload artifact to JFrog Artifactory
 
 on:
@@ -86,17 +85,23 @@ jobs:
           name: ${{ inputs.workflow-artifact-name }}
           path: temp/${{ inputs.workflow-artifact-name }}
 
-      - uses: jfrog/setup-jfrog-cli@v4
-        env:
-          JF_URL: ${{ inputs.jfrog-url }}
-          JF_ACCESS_TOKEN: ${{ secrets.jfrog-access-token }}
+      - name: Setup JFrog CLI
+        uses: jfrog/setup-jfrog-cli@v4
 
-      - name: Configure JFrog CLI
+      - name: Configure JFrog CLI Server
+        # This step explicitly configures the CLI with the URL and Access Token,
+        # which was missing and caused the 'no JFrog Artifactory URL specified' error.
+        run: |
+          jf rt config add jfrog-server --url=${{ inputs.jfrog-url }} --access-token=${{ secrets.jfrog-access-token }} --artifactory-only
+
+      - name: Configure JFrog CLI Build Info
+        # This step moves the existing build name/number setup here.
         run: |
           echo "JFROG_CLI_BUILD_NAME=$JFROG_BUILD_NAME" | tee --append "$GITHUB_ENV"
           echo "JFROG_CLI_BUILD_NUMBER=$JFROG_BUILD_NUMBER" | tee --append "$GITHUB_ENV"
 
       - name: Verify Artifactory is accessible
+        # This should now succeed as the server is configured.
         run: jf rt ping
 
       - name: Upload to ${{ inputs.jfrog-repository }} artifact repository
