@@ -3,6 +3,7 @@ name: Upload artifact to JFrog Artifactory
 on:
   push:
     branches: main 
+
   workflow_call:
     inputs:
       jfrog-url:
@@ -59,6 +60,8 @@ on:
       jfrog-build-number:
         description: JFrog build number used
         value: ${{ jobs.upload.outputs.jfrog-build-number }}
+env:
+    JF_URL: "https://hts2.jfrog.io"           
 
 jobs:
   upload:
@@ -87,7 +90,7 @@ jobs:
 
       - uses: jfrog/setup-jfrog-cli@v4
         env:
-          JF_URL: ${{ env.JFROG_CLI_BASE_URL}}
+          JF_URL: ${{ env.JF_URL}}
           JF_ACCESS_TOKEN: ${{ secrets.jfrog-access-token }}
 
       - name: Configure JFrog CLI
