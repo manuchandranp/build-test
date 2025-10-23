@@ -87,7 +87,7 @@ jobs:
 
       - uses: jfrog/setup-jfrog-cli@v4
         env:
-          JF_URL: ${{ inputs.jfrog-url }}
+          JF_URL: ${{ env.JFROG_CLI_BASE_URL}}
           JF_ACCESS_TOKEN: ${{ secrets.jfrog-access-token }}
 
       - name: Configure JFrog CLI
