@@ -92,7 +92,7 @@ jobs:
         # This step explicitly configures the CLI with the URL and Access Token,
         # which was missing and caused the 'no JFrog Artifactory URL specified' error.
         run: |
-          jf rt config add jfrog-server --url=${{ inputs.jfrog-url }} --access-token=${{ secrets.jfrog-access-token }} --artifactory-only
+          jf config add jfrog-server --url=${{ inputs.jfrog-url }} --access-token=${{ secrets.jfrog-access-token }} --artifactory-only
 
       - name: Configure JFrog CLI Build Info
         # This step moves the existing build name/number setup here.
